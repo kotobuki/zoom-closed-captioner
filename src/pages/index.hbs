@@ -78,27 +78,31 @@
         <h1 class="title">Zoom用簡易字幕サービス</h1>
 
         <form class="caption" method="post" action="/caption" name="caption">
-          <label for="apiToken">
-            APIトークン<br />
-            <input
-              id="apiToken"
-              name="apiToken"
-              required="required"
-              type="text"
-              size="100"
-            />
-          </label>
+          <div class="form-item">
+            <label for="apiToken">
+              APIトークン<br />
+              <input
+                id="apiToken"
+                name="apiToken"
+                required="required"
+                type="text"
+                size="100"
+              />
+            </label>
+          </div>
 
-          <label for="caption">
-            字幕<br />
-            <input
-              id="captionText"
-              name="captionText"
-              required="required"
-              type="text"
-              size="100"
-            />
-          </label>
+          <div class="form-item">
+            <label for="caption">
+              字幕<br />
+              <input
+                id="captionText"
+                name="captionText"
+                required="required"
+                type="text"
+                size="100"
+              />
+            </label>
+          </div>
 
           <button type="submit">字幕を投稿</button>
         </form>
