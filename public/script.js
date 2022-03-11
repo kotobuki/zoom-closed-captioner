@@ -1,30 +1,61 @@
-const startListeningLabel = '音声認識を開始する';
-const stopListeningLabel = '音声認識を終了する';
-
-const toggleListeningButton = document.getElementById("toggleListeningButton");
-toggleListeningButton.value = startListeningLabel;
-toggleListeningButton.addEventListener("click", updateButton);
-
-function updateButton() {
-  if (toggleListeningButton.value === startListeningLabel) {
-    toggleListeningButton.value = stopListeningLabel;
-    startRecognition();
-  } else {
-    stopRecognition();
-    toggleListeningButton.value = startListeningLabel;
-  }
-}
-
 window.SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
 let recognition;
 let isRecognizing = false;
 let isListening = false;
 
+const startListeningLabel = "音声認識を開始する";
+const stopListeningLabel = "音声認識を終了する";
+
+const autoSubmitCheckbox = document.getElementById("enableAutoSubmit");
+let isAutoSubmitEnabled = autoSubmitCheckbox.checked;
+autoSubmitCheckbox.addEventListener("change", () => {
+  console.log(autoSubmitCheckbox.checked);
+  isAutoSubmitEnabled = autoSubmitCheckbox.checked;
+});
+
+const toggleListeningButton = document.getElementById("toggleListeningButton");
+toggleListeningButton.addEventListener("click", () => {
+  if (!isListening) {
+    startRecognition();
+  } else {
+    stopRecognition();
+  }
+});
+updateButton();
+
+function updateButton() {
+  if (isListening) {
+    toggleListeningButton.value = stopListeningLabel;
+  } else {
+    toggleListeningButton.value = startListeningLabel;
+  }
+}
+
+const languageMenu = document.getElementById("language");
+
+// https://cloud.google.com/speech-to-text#section-2
+const languages = { 日本語: "ja-JP", "English (Great Britain)": "en-GB" };
+for (let label of Object.keys(languages)) {
+  let option = document.createElement("option");
+  option.text = label;
+  languageMenu.add(option);
+}
+languageMenu.selectedIndex = 0;
+languageMenu.addEventListener("change", updateLanguage);
+
+let language;
+updateLanguage();
+
+function updateLanguage() {
+  language = languages[languageMenu.value];
+  stopRecognition();
+}
+
 function startRecognition() {
   recognition = new webkitSpeechRecognition();
   recognition.interimResults = true;
   recognition.continuous = true;
-  recognition.lang = "ja";
+  recognition.lang = language;
 
   recognition.onsoundstart = function () {
     document.getElementById("status").innerHTML = "認識中";
@@ -57,7 +88,9 @@ function startRecognition() {
         document.getElementById("resultText").innerHTML =
           results[i][0].transcript;
         document.getElementById("captionText").value = results[i][0].transcript;
-        document.forms["caption"].submit();
+        if (isAutoSubmitEnabled) {
+          document.forms["caption"].submit();
+        }
         if (isListening) {
           startRecognition();
         }
@@ -73,9 +106,15 @@ function startRecognition() {
   document.getElementById("status").innerHTML = "待機中";
   recognition.start();
   isListening = true;
+  updateButton();
 }
 
 function stopRecognition() {
+  if (!isListening) {
+    return;
+  }
+
   isListening = false;
   recognition.stop();
+  updateButton();
 }

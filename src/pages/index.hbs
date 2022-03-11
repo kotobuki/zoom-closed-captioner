@@ -61,29 +61,35 @@
               />
             </label>
           </div>
-
           <button type="submit">字幕を投稿する</button>
+        </form>
+
+        <div>
           <input
             type="checkbox"
             id="enableAutoSubmit"
             name="submit"
             value="enabled"
             checked
-            disabled
           /><label for="enableAutoSubmit">認識後に自動で字幕を投稿する</label>
-        </form>
+        </div>
 
-        <textarea id="resultText" cols="100" rows="10">
-        </textarea>
-        <br />
-        <textarea id="status" cols="100" rows="1">
-        </textarea>
-        <br />
-        <input
-          type="button"
-          value="音声認識を開始する"
-          id="toggleListeningButton"
-        />
+        <div>
+          <textarea id="resultText" cols="100" rows="10">
+          </textarea>
+          <textarea id="status" cols="100" rows="1">
+          </textarea>
+        </div>
+
+        <div>
+          <input
+            type="button"
+            value="音声認識を開始する"
+            id="toggleListeningButton"
+          />
+          <select id="language">
+          </select>
+        </div>
 
         <!-- Instructions on using this project -->
         <div class="instructions">
