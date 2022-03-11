@@ -4,7 +4,4 @@
 
 - 常に音声認識の結果を採用するかどうかを設定できるUIを追加する
 - 音声認識の一時停止・再開を設定できるUIを追加する
-
-## 参考にした記事など
-
-- [Web Speech APIで途切れない音声認識](https://monomonotech.jp/kurage/iot/webspeechapi_voice_recognition.html)
+- `Live site`と`Code`で挙動が異なり、`Live site`では認識途中のテキストが表示されない問題を解決する（必ず再現するというわけでもない）

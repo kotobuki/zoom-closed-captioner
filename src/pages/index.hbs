@@ -26,56 +26,14 @@
     <!-- Import the webpage's stylesheet -->
     <link rel="stylesheet" href="/style.css" />
 
-    <script>
-      var isRecognizing = 0;
-
-      function startRecognition() {
-        window.SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
-        var recognition = new webkitSpeechRecognition();
-        recognition.lang = 'ja';
-        recognition.interimResults = true;
-        recognition.continuous = true;
-
-        recognition.onsoundstart = function () {
-          document.getElementById('status').innerHTML = '認識中';
-        };
-        recognition.onnomatch = function () {
-          document.getElementById('status').innerHTML = 'もう一度試してください';
-        };
-        recognition.onerror = function () {
-          document.getElementById('status').innerHTML = 'エラー';
-          if (isRecognizing == 0) startRecognition();
-        };
-        recognition.onsoundend = function () {
-          document.getElementById('status').innerHTML = '停止中';
-          startRecognition();
-        };
-
-        recognition.onresult = function (event) {
-          var results = event.results;
-          for (var i = event.resultIndex; i < results.length; i++) {
-            if (results[i].isFinal) {
-              document.getElementById('resultText').innerHTML = results[i][0].transcript;
-              document.getElementById('captionText').value = results[i][0].transcript;
-              document.forms['caption'].submit();
-              startRecognition();
-            } else {
-              document.getElementById('resultText').innerHTML = '［認識中］' + results[i][0].transcript;
-              isRecognizing = 1;
-            }
-          }
-        };
-        isRecognizing = 0;
-        document.getElementById('status').innerHTML = '待機中';
-        recognition.start();
-      }
-    </script>
+    <!-- Import the webpage's javascript file -->
+    <script src="/script.js" defer></script>
   </head>
   <body>
     <div class="wrapper">
       <div class="content" role="main">
 
-        <h1 class="title">Zoom用簡易字幕サービス</h1>
+        <h1 class="title">Tiny Automatic Caption Tool for Zoom</h1>
 
         <form class="caption" method="post" action="/caption" name="caption">
           <div class="form-item">
@@ -104,7 +62,15 @@
             </label>
           </div>
 
-          <button type="submit">字幕を投稿</button>
+          <button type="submit">字幕を投稿する</button>
+          <input
+            type="checkbox"
+            id="enableAutoSubmit"
+            name="submit"
+            value="enabled"
+            checked
+            disabled
+          /><label for="enableAutoSubmit">認識後に自動で字幕を投稿する</label>
         </form>
 
         <textarea id="resultText" cols="100" rows="10">
@@ -115,8 +81,8 @@
         <br />
         <input
           type="button"
-          onClick="startRecognition();"
-          value="音声認識開始"
+          value="音声認識を開始する"
+          id="toggleListeningButton"
         />
 
         <!-- Instructions on using this project -->
@@ -126,17 +92,17 @@
           </h2>
           <p>
             <ol>
-              <li>APIトークンを取得する（<a
+              <li
+              >Zoomミーティング／ウェビナーでホストまたは共同ホストがAPIトークンを取得する（<a
                   href="https://support.zoom.us/hc/ja/articles/115002212983-%E3%82%B5%E3%83%BC%E3%83%89%E3%83%91%E3%83%BC%E3%83%86%E3%82%A3%E3%81%AE%E5%AD%97%E5%B9%95%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9%E3%81%A8%E3%81%AE%E9%80%A3%E6%90%BA#h_4b01d271-eb7b-473d-b82a-f8bb6eb80ba1"
                   target="_blank"
                   rel="noopener noreferrer"
                 >説明</a>）</li>
-              <li
-              >取得したAPIトークンを［APIトークン］欄に入力する</li>
-              <li>［音声認識開始］ボタンを押す</li>
+              <li>取得したAPIトークンを［APIトークン］欄に入力する</li>
+              <li>［音声認識を開始する］ボタンを押す</li>
 
             </ol>
-            以上で、音声認識が完了する度にZoomに字幕として入力されるようになります。なお、音声認識を使用せず、［字幕］欄に入力し［字幕を投稿］ボタンを押すことでも更新できます。
+            以上で、音声認識が完了する度にZoomに字幕として入力されるようになります。なお、音声認識を使用せず、［字幕］欄に入力し［字幕を投稿する］ボタンを押すことでも更新できます。
           </p>
         </div>
 

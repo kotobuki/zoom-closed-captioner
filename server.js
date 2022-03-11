@@ -71,12 +71,9 @@ fastify.post("/caption", function (request, reply) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(typeof data);
         counter = data;
-        console.log("counter", counter);
         const urlToSubmitCaption = `${apiToken}&seq=${counter + 1}&lang=jp-JP`;
         const text = caption;
-        console.log("text", text);
         fetch(urlToSubmitCaption, {
           method: "POST",
           mode: "cors",
@@ -85,10 +82,7 @@ fastify.post("/caption", function (request, reply) {
           body: text,
         })
           .then((response) => response.json())
-          .then((data) => {
-            console.log(data);
-            counter = data;
-          });
+          .then((data) => console.log(data));
       });
   }
 });
