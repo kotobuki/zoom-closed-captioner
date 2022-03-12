@@ -6,10 +6,9 @@ let isListening = false;
 const startListeningLabel = "音声認識を開始する";
 const stopListeningLabel = "音声認識を終了する";
 
-const autoSubmitCheckbox = document.getElementById("enableAutoSubmit");
+const autoSubmitCheckbox = document.getElementById("autoSubmitCheckbox");
 let isAutoSubmitEnabled = autoSubmitCheckbox.checked;
 autoSubmitCheckbox.addEventListener("change", () => {
-  console.log(autoSubmitCheckbox.checked);
   isAutoSubmitEnabled = autoSubmitCheckbox.checked;
 });
 
@@ -31,10 +30,30 @@ function updateButton() {
   }
 }
 
+const submitCaptionButton = document.getElementById("submitCaptionButton");
+
+submitCaptionButton.addEventListener("click", () => {
+  document.forms["caption"].submit();
+  if (recognizedText.textContent.length > 0) {
+    captionText.value = recognizedText.textContent;
+    recognizedText.textContent = "";
+  } else {
+    captionText.value = "";
+  }
+
+  if (!isAutoSubmitEnabled) {
+    captionText.focus();
+  }
+});
+
 const languageMenu = document.getElementById("language");
 
 // https://cloud.google.com/speech-to-text#section-2
-const languages = { 日本語: "ja-JP", "English (Great Britain)": "en-GB" };
+const languages = {
+  "日本語 (日本)": "ja-JP",
+  "English (Great Britain)": "en-GB",
+  "English (United States)": "en-US",
+};
 for (let label of Object.keys(languages)) {
   let option = document.createElement("option");
   option.text = label;
@@ -51,6 +70,11 @@ function updateLanguage() {
   stopRecognition();
 }
 
+const captionText = document.getElementById("captionText");
+const recognizedText = document.getElementById("recognizedText");
+const resultText = document.getElementById("resultText");
+const status = document.getElementById("status");
+
 function startRecognition() {
   recognition = new webkitSpeechRecognition();
   recognition.interimResults = true;
@@ -58,24 +82,24 @@ function startRecognition() {
   recognition.lang = language;
 
   recognition.onsoundstart = function () {
-    document.getElementById("status").innerHTML = "認識中";
+    status.textContent = "認識中";
   };
 
   recognition.onnomatch = function () {
-    document.getElementById("status").innerHTML = "もう一度試してください";
+    status.textContent = "もう一度試してください";
   };
 
   recognition.onerror = function (event) {
     if (event.error === "aborted") {
-      document.getElementById("status").innerHTML = "停止中";
+      status.textContent = "停止中";
     } else {
-      document.getElementById("status").innerHTML = `エラー：${event.error}`;
+      status.textContent = `エラー：${event.error}`;
     }
     if (isListening && isRecognizing == false) startRecognition();
   };
 
   recognition.onsoundend = function () {
-    document.getElementById("status").innerHTML = "停止中";
+    status.textContent = "停止中";
     if (isListening) {
       startRecognition();
     }
@@ -85,25 +109,35 @@ function startRecognition() {
     var results = event.results;
     for (var i = event.resultIndex; i < results.length; i++) {
       if (results[i].isFinal) {
-        document.getElementById("resultText").innerHTML =
-          results[i][0].transcript;
-        document.getElementById("captionText").value = results[i][0].transcript;
-        if (isAutoSubmitEnabled) {
-          document.forms["caption"].submit();
+        resultText.textContent = "";
+
+        const captionTextHasFocus =
+          document.activeElement.id === captionText.id &&
+          captionText.value.length > 0;
+
+        if (!captionTextHasFocus) {
+          captionText.value = results[i][0].transcript;
+          if (isAutoSubmitEnabled) {
+            document.forms["caption"].submit();
+          }
+        } else {
+          recognizedText.insertAdjacentText(
+            "beforeend",
+            results[i][0].transcript
+          );
         }
         if (isListening) {
           startRecognition();
         }
       } else {
-        document.getElementById("resultText").innerHTML =
-          "［認識中］" + results[i][0].transcript;
+        resultText.textContent = "［認識中］" + results[i][0].transcript;
         isRecognizing = true;
       }
     }
   };
 
   isRecognizing = false;
-  document.getElementById("status").innerHTML = "待機中";
+  status.textContent = "待機中";
   recognition.start();
   isListening = true;
   updateButton();

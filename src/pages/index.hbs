@@ -11,7 +11,7 @@
     <link rel="icon" href="https://glitch.com/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Title</title>
+    <title>Minimal captioning tool for Zoom</title>
 
     <!-- Meta tags for SEO and social sharing -->
     <!--     <link rel="canonical" href="{{seo.url}}" />
@@ -33,52 +33,54 @@
     <div class="wrapper">
       <div class="content" role="main">
 
-        <h1 class="title">Tiny Automatic Caption Tool for Zoom</h1>
+        <h1 class="title">Minimal captioning tool for Zoom</h1>
 
         <form class="caption" method="post" action="/caption" name="caption">
           <div class="form-item">
             <label for="apiToken">
               APIトークン<br />
-              <input
+              <textarea
                 id="apiToken"
                 name="apiToken"
                 required="required"
                 type="text"
-                size="100"
-              />
+                cols="100"
+                rows="5"
+                placeholder="APIトークンをここにペーストしてください"
+              ></textarea>
             </label>
           </div>
 
           <div class="form-item">
             <label for="caption">
               字幕<br />
-              <input
+              <textarea
                 id="captionText"
                 name="captionText"
-                required="required"
                 type="text"
-                size="100"
-              />
+                cols="100"
+                rows="5"
+                placeholder="字幕として表示したい文字列をここに入力してください"
+              ></textarea>
             </label>
           </div>
-          <button type="submit">字幕を投稿する</button>
         </form>
-
         <div>
+          <button type="button" id="submitCaptionButton">字幕を投稿する</button>
           <input
             type="checkbox"
-            id="enableAutoSubmit"
-            name="submit"
+            id="autoSubmitCheckbox"
+            name="autoSubmit"
             value="enabled"
             checked
-          /><label for="enableAutoSubmit">認識後に自動で字幕を投稿する</label>
+          /><label for="autoSubmitCheckbox">認識後に自動で投稿する</label>
         </div>
-
         <div>
-          <textarea id="resultText" cols="100" rows="10">
-          </textarea>
-          <textarea id="status" cols="100" rows="1">
-          </textarea>
+          <textarea id="recognizedText" cols="100" rows="5" disabled></textarea>
+          <br />
+          <textarea id="resultText" cols="100" rows="5" disabled></textarea>
+          <br />
+          <textarea id="status" cols="100" rows="1"></textarea>
         </div>
 
         <div>
@@ -99,7 +101,7 @@
           <p>
             <ol>
               <li
-              >Zoomミーティング／ウェビナーでホストまたは共同ホストがAPIトークンを取得する（<a
+              >Zoomミーティング／ウェビナーでホストがAPIトークンを取得する（<a
                   href="https://support.zoom.us/hc/ja/articles/115002212983-%E3%82%B5%E3%83%BC%E3%83%89%E3%83%91%E3%83%BC%E3%83%86%E3%82%A3%E3%81%AE%E5%AD%97%E5%B9%95%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9%E3%81%A8%E3%81%AE%E9%80%A3%E6%90%BA#h_4b01d271-eb7b-473d-b82a-f8bb6eb80ba1"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -108,7 +110,7 @@
               <li>［音声認識を開始する］ボタンを押す</li>
 
             </ol>
-            以上で、音声認識が完了する度にZoomに字幕として入力されるようになります。なお、音声認識を使用せず、［字幕］欄に入力し［字幕を投稿する］ボタンを押すことでも更新できます。
+            以上で、音声認識が完了する度にZoomに字幕として投稿されるようになります。なお、音声認識を使用せず、［字幕］欄に入力し［字幕を投稿する］ボタンを押すことでも更新できます。また、［認識後に自動で投稿する］のチェックを外すと［字幕を投稿する］ボタンを押さない限り投稿されないようになります。これにより、誤認識を修正した上で投稿できるようになります。
           </p>
         </div>
 
